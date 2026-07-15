@@ -37,5 +37,29 @@ router.get('/:id',(req,res) =>{
 
 });
 
+router.post('/',(req,res)=>{
+    const {id, nombre, profesor} = req.body;
+
+    if(!id || !nombre || !profesor){
+        return res.status(400).json({
+            msj: 'Verificar los campos requeridos'
+        });
+    };
+
+    const nuevoCurso = {
+        id,
+        nombre,
+        profesor
+    };
+
+    cursos.push(nuevoCurso);
+
+    res.status(201).json({
+        msj: 'Curso agregado correctamente',
+        curso: nuevoCurso
+    });
+
+});
+
 
 module.exports = router;

@@ -1,11 +1,15 @@
 const express = require('express');
-
+const cors = require('cors');
+const connectDB = require('./config/db');
 const app = express();
-const PORT = 3000;
+
+require('dotenv').config();//process.env
+const PORT = process.env.PORT || 3000;
 
 //Middlewares
 app.use(express.json()); //Se habilita la lectura de JSON
 
+app.use(cors());
 
 //Ruta principal
 app.get('/', (req, res) =>{
@@ -25,6 +29,8 @@ app.post('/api/test', (req,res) =>{
 const cursosRoutes = require('./routes/cursos.route');
 
 app.use('/api/cursos', cursosRoutes);
+
+connectDB();
 
 app.listen(PORT, ()=>{
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
