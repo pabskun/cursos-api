@@ -1,17 +1,23 @@
 const express = require('express');
+const Curso = require('../models/cursos.model');
 const router = express.Router();
 
-const cursos = [
-    {id: 1, nombre : 'HTML y CSS', profesor: 'Álvaro Cordero'},
-    {id: 2, nombre: 'Bases de datos', profesor: 'Pablo Monestel'},
-    {id: 3, nombre: 'Proyecto 3', profesor: 'Limberth Vásquez'}
-];
 
-router.get('/',(req,res) =>{
-    res.json(cursos);
+router.get('/', async (req, res) => {
+    try {
+        const cursos = await Curso.find();
+
+        if (cursos.length === 0) {
+            return res.status(404).json({ msj: 'No hay cursos registrados' });
+        }
+
+        res.json(cursos);
+    } catch (error) {
+        res.status(500).json({ msj: 'Sucedió un error al obtener la lista de cursos : ' + error });
+    }
 });
 
-router.get('/buscarporid',(req,res) =>{
+/*router.get('/buscarporid',(req,res) =>{
     
     const id = Number(req.query.id);
     console.log(id);
@@ -23,42 +29,99 @@ router.get('/buscarporid',(req,res) =>{
 
     res.json(curso);
 
-});
+});*/
 
-router.get('/:id',(req,res) =>{
-    const id = Number(req.params.id);
-    const curso = cursos.find(item => item.id === id);
+router.get('/:id', async (req, res) => {
+    try {
+        const curso = await Curso.findById(req.params.id);
 
-    if(!curso){
-        return res.status(404).json({msj: 'Curso no encontrado'});
+        if (!curso) {
+            return res.status(404).json({ msj: 'No se encontró ningún curso con ese id' });
+        }
+
+        res.json(curso);
+    } catch (error) {
+        res.status(500).json({ msj: 'Sucedió un error al obtener el curso : ' + error });
     }
 
-    res.json(curso);
-
 });
 
-router.post('/',(req,res)=>{
-    const {id, nombre, profesor} = req.body;
-
-    if(!id || !nombre || !profesor){
-        return res.status(400).json({
-            msj: 'Verificar los campos requeridos'
+router.post('/', async (req, res) => {
+    try {
+        const { nombre, profesor, creditos, estado } = req.body;
+        if (!nombre || !profesor || !creditos) {
+            return res.status(400).json({
+                msj: 'Verificar los campos requeridos'
+            });
+        };
+        const curso = await Curso.create(req.body);
+        res.status(201).json({
+            msj: 'Curso agregado correctamente',
+            curso
         });
-    };
+    } catch (error) {
+        res.status(400).json({
+            msj: 'No se pudo registrar el curso',
+            error: error.message
+        });
+    }
+});
 
-    const nuevoCurso = {
-        id,
-        nombre,
-        profesor
-    };
+router.put('/:id', async (req, res) => {
+    try {
+        const { nombre, profesor, creditos, estado } = req.body;
+        let mensaje = "";
+        let error = false;
+        if (!nombre || !profesor) {
+            error = true;
+            mensaje = 'Los campos de nombre y profesor son obligatorios. ';
+        };
 
-    cursos.push(nuevoCurso);
+        if (creditos < 1) {
+            error = true;
+            mensaje += 'Los créditos deben ser mayor o igual a 1. ';
+        }
 
-    res.status(201).json({
-        msj: 'Curso agregado correctamente',
-        curso: nuevoCurso
-    });
+        if (error) {
+            return res.status(400).json({
+                msj: mensaje
+            });
+        }
 
+        const curso = await Curso.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
+        if (!curso) {
+            return res.status(404).json({ msj: 'El curso no se encontró' });
+        }
+
+        res.json(curso);
+
+    } catch (error) {
+        res.status(400).json({ msj: 'No se pudo actualizar el curso' });
+    }
+});
+
+router.patch('/:id/estado', async (req, res) => {
+    try {
+        const { estado } = req.body;
+        if (estado === undefined) {
+            return res.status(400).json({
+                msj: 'El estado es obligatorio'
+            });
+        }
+        const curso = await Curso.findByIdAndUpdate(req.params.id, { estado }, { new: true, runValidators: true });
+        if (!curso) {
+            return res.status(404).json({ msj: 'El curso no se encontró' });
+        }
+
+        res.json({
+            msj: 'El estado se actualizó correctamente',
+            curso
+        });
+    }catch(error){
+         res.status(400).json({ msj: 'No se pudo actualizar el estado' });
+    }
+    
 });
 
 

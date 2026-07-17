@@ -1,0 +1,30 @@
+const mongoose = require('mongoose');
+
+const cursoSchema = new mongoose.Schema({
+        nombre : {
+            type : String,
+            required : true,
+            trim : true
+        },
+        profesor : {
+            type : String,
+            required : true,
+            trim : true
+        },
+        creditos : {
+            type: Number,
+            required : true,
+            min : 1
+        },
+        estado : {
+            type : String,
+            enum : ["Activo", "Inactivo", "Bloqueado"],
+            default : "Activo"
+        }
+    },
+    {
+        timestamps : true
+    }
+);
+
+module.exports = mongoose.model('Curso' , cursoSchema);
