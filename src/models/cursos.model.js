@@ -20,7 +20,28 @@ const cursoSchema = new mongoose.Schema({
             type : String,
             enum : ["Activo", "Inactivo", "Bloqueado"],
             default : "Activo"
-        }
+        },
+        estudiantes: [
+            {
+                nombre : {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                correo : {
+                    type: String,
+                    required: true,
+                    unique: true,
+                    trim: true
+                },
+                nota: {
+                    type: Number,
+                    min : 0,
+                    max: 100,
+                    default: 0
+                },
+            }
+        ]
     },
     {
         timestamps : true

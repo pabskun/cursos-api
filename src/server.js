@@ -27,8 +27,10 @@ app.post('/api/test', (req,res) =>{
 });
 
 const cursosRoutes = require('./routes/cursos.route');
+const usuariosRoutes = require('./routes/usuarios.route');
 
 app.use('/api/cursos', cursosRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 
 connectDB();
 

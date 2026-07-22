@@ -67,6 +67,38 @@ router.post('/', async (req, res) => {
     }
 });
 
+//Agregar estudiante al curso
+
+router.post('/:id/estudiante', async(req,res)=>{
+    try{
+        const curso = await Curso.findById(req.params.id);
+
+        if(!curso){
+            return res.status(404).json({
+                msj: 'Curso no encontrado'
+            });
+        }
+
+        curso.estudiantes.push({
+            nombre : req.body.nombre,
+            correo : req.body.correo,
+            nota : req.body.nota 
+        });
+
+        await curso.save();
+
+        res.status(201).json({
+            msj: 'Estudiante agregado correctamente',
+            curso: curso
+        });
+
+    }catch(error){
+        res.status(500).json({
+            msj: 'Error al agregar el estudiante' + error.message
+        });
+    }
+});
+
 router.put('/:id', async (req, res) => {
     try {
         const { nombre, profesor, creditos, estado } = req.body;
