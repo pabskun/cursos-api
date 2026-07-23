@@ -67,12 +67,13 @@ router.post('/', async (req, res) => {
         const {
             nombre,
             correo,
-            contrasenna
+            contrasenna,
+            tipoUsuario
         } = req.body;
 
 
         
-        if (!nombre || !correo || !contrasenna) {
+        if (!nombre || !correo || !contrasenna || !tipoUsuario) {
 
             return res.status(400).json({
                 msj: 'Nombre, correo y contraseña son requeridos'
@@ -80,6 +81,20 @@ router.post('/', async (req, res) => {
 
         }
 
+         // Validar el tipo de usuario
+        const tiposPermitidos = [
+            'admin',
+            'profesor',
+            'estudiante'
+        ];
+
+        if (!tiposPermitidos.includes(tipoUsuario)) {
+
+            return res.status(400).json({
+                msj: 'El tipo de usuario debe ser admin, profesor o estudiante'
+            });
+
+        }
 
         
         const usuarioExistente = await Usuario.findOne({
@@ -104,13 +119,10 @@ router.post('/', async (req, res) => {
 
         // Crear nuevo usuario
         const nuevoUsuario = new Usuario({
-
             nombre: nombre,
-
             correo: correo,
-
-            contrasenna: contrasennaEncriptada
-
+            contrasenna: contrasennaEncriptada,
+            tipoUsuario: tipoUsuario
         });
 
 
@@ -196,7 +208,8 @@ router.put('/:id', async (req, res) => {
         const {
             nombre,
             correo,
-            contrasenna
+            contrasenna,
+            tipoUsuario
         } = req.body;
 
 
@@ -212,7 +225,25 @@ router.put('/:id', async (req, res) => {
             datosActualizar.correo = correo;
         }
 
+ if (tipoUsuario) {
 
+            const tiposPermitidos = [
+                'admin',
+                'profesor',
+                'estudiante'
+            ];
+
+            if (!tiposPermitidos.includes(tipoUsuario)) {
+
+                return res.status(400).json({
+                    msj: 'El tipo de usuario debe ser admin, profesor o estudiante'
+                });
+
+            }
+
+            datosActualizar.tipoUsuario = tipoUsuario;
+
+        }
         // Si cambia la contraseña,
         // hay que volver a encriptarla
         if (contrasenna) {

@@ -14,6 +14,12 @@ const usuarioSchema = new mongoose.Schema({
     contrasenna: {
         type: String,
         required: true
+    },
+
+    tipoUsuario: {
+        type: String,
+        required: true,
+        enum: ['admin', 'profesor', 'estudiante']
     }
 });
 
