@@ -1,0 +1,30 @@
+{
+    "nombre": "Ana Rodríguez",
+    "correo": "ana.rodriguez@gmail.com",
+    "contrasenna": "Ana12345",
+    "tipoUsuario": "estudiante"
+}
+{
+    "nombre": "Carlos Méndez",
+    "correo": "carlos.mendez@gmail.com",
+    "contrasenna": "Carlos2026",
+    "tipoUsuario": "estudiante"
+}
+{
+    "nombre": "María Fernández",
+    "correo": "maria.fernandez@gmail.com",
+    "contrasenna": "Maria9876",
+    "tipoUsuario": "estudiante"
+}
+{
+    "nombre": "José Ramírez",
+    "correo": "jose.ramirez@gmail.com",
+    "contrasenna": "Jose45678",
+    "tipoUsuario": "estudiante"
+}
+{
+    "nombre": "Daniela Vargas",
+    "correo": "daniela.vargas@gmail.com",
+    "contrasenna": "Daniela2026",
+    "tipoUsuario": "estudiante"
+}
