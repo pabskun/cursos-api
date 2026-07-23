@@ -72,7 +72,7 @@ router.post('/', async (req, res) => {
         } = req.body;
 
 
-        
+
         if (!nombre || !correo || !contrasenna || !tipoUsuario) {
 
             return res.status(400).json({
@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
 
         }
 
-         // Validar el tipo de usuario
+        // Validar el tipo de usuario
         const tiposPermitidos = [
             'admin',
             'profesor',
@@ -96,7 +96,7 @@ router.post('/', async (req, res) => {
 
         }
 
-        
+
         const usuarioExistente = await Usuario.findOne({
             correo: correo
         });
@@ -126,7 +126,7 @@ router.post('/', async (req, res) => {
         });
 
 
-       
+
         await nuevoUsuario.save();
 
 
@@ -225,7 +225,7 @@ router.put('/:id', async (req, res) => {
             datosActualizar.correo = correo;
         }
 
- if (tipoUsuario) {
+        if (tipoUsuario) {
 
             const tiposPermitidos = [
                 'admin',
