@@ -1,5 +1,6 @@
 const express = require('express');
 const Curso = require('../models/cursos.model');
+const Usuario = require('../models/usuarios.model');
 const router = express.Router();
 
 
@@ -69,20 +70,56 @@ router.post('/', async (req, res) => {
 
 //Agregar estudiante al curso
 
-router.post('/:id/estudiante', async(req,res)=>{
-    try{
+router.post('/:id/estudiante', async (req, res) => {
+    try {
+        const { idEstudiante, nota } = req.body;
+
         const curso = await Curso.findById(req.params.id);
 
-        if(!curso){
+        if (!curso) {
             return res.status(404).json({
                 msj: 'Curso no encontrado'
             });
         }
 
+        //Buscar el usuario estudiante
+        const estudiante = await Usuario.findById(idEstudiante);
+
+        if (!estudiante) {
+            return res.status(404).json({
+                msj: 'El usuario no existe'
+            });
+        }
+
+        //Validar que el usuario sea estudiante
+        if (estudiante.tipoUsuario !== 'estudiante') {
+            return res.status(400).json({
+                msj: 'El usuario seleccionado no es un estudiante'
+            });
+        }
+
+        //Validar la nota
+        if (nota < 0 || nota > 100) {
+            return res.status(400).json({
+                msj: 'La nota debe estar entre 0 y 100'
+            });
+        }
+
+        // Verificar que el estudiante no se encuentre dentro de la lista de estudiantes del curso
+        const estudianteExiste = curso.estudiantes.some(i => {
+            i.estudiante.toString() === idEstudiante;
+            //ObjectId('1234').toString() ==> "1234"
+        });
+
+        if (estudianteExiste) {
+            return res.status(400).json({
+                msj: 'El estudiante ya está registrado en el curso'
+            });
+        }
+
         curso.estudiantes.push({
-            nombre : req.body.nombre,
-            correo : req.body.correo,
-            nota : req.body.nota 
+            estudiante : idEstudiante,
+            nota: req.body.nota
         });
 
         await curso.save();
@@ -92,7 +129,7 @@ router.post('/:id/estudiante', async(req,res)=>{
             curso: curso
         });
 
-    }catch(error){
+    } catch (error) {
         res.status(500).json({
             msj: 'Error al agregar el estudiante' + error.message
         });
@@ -150,10 +187,10 @@ router.patch('/:id/estado', async (req, res) => {
             msj: 'El estado se actualizó correctamente',
             curso
         });
-    }catch(error){
-         res.status(400).json({ msj: 'No se pudo actualizar el estado' });
+    } catch (error) {
+        res.status(400).json({ msj: 'No se pudo actualizar el estado' });
     }
-    
+
 });
 
 

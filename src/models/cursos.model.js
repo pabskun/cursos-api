@@ -23,16 +23,10 @@ const cursoSchema = new mongoose.Schema({
         },
         estudiantes: [
             {
-                nombre : {
-                    type: String,
-                    required: true,
-                    trim: true
-                },
-                correo : {
-                    type: String,
-                    required: true,
-                    unique: true,
-                    trim: true
+                estudiante:{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref : 'Usuario',
+                    required: true
                 },
                 nota: {
                     type: Number,
