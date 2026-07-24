@@ -6,7 +6,11 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const cursos = await Curso.find();
+        const cursos = await Curso.find()
+        .populate(
+                'estudiantes.estudiante',
+                'nombre correo tipoUsuario'// Se toman del modelo de Usuario
+        );
 
         if (cursos.length === 0) {
             return res.status(404).json({ msj: 'No hay cursos registrados' });
@@ -32,6 +36,7 @@ router.get('/', async (req, res) => {
 
 });*/
 
+//Investigar como usar el populate para devolver la información del estudiante
 router.get('/:id', async (req, res) => {
     try {
         const curso = await Curso.findById(req.params.id);
